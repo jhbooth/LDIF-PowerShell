@@ -1,3 +1,80 @@
+#===============================================================================
+
+<#
+ .Synopsis
+  Imports directory credentials from a file, and returns a custom PowerShell object.
+
+ .Description
+  Imports directory credentials from a file created using Export-DirectoryCredential.
+  
+ .Parameter Path
+  Path to the file containing credentials
+  
+ .Example
+   # Import from the default DirectoryCredential.xml file
+   Import-DirectoryCredential
+
+ .Example
+   # Import directory credentials from file called TestUser.xml
+   Import-DirectoryCredential '.\TestUser.xml'
+#>
+function Import-DirectoryCredential {
+    param ( $Path = "DirectoryCredential.xml" )
+
+    # Import credential file
+    $import = Import-Clixml $Path 
+    
+    # Test for valid import
+    if ( $import.PSObject.TypeNames -notcontains 'Deserialized.ExportedDirectoryCredential' )
+    {
+        Throw "Input is not a valid ExportedDirectoryCredential object, exiting."
+    }
+    
+    Add-Member -InputObject $import -MemberType AliasProperty -Name DN -Value DistinguishedName
+    Add-Member -InputObject $import -MemberType AliasProperty -Name ID -Value UserID
+    Add-Member -InputObject $import -MemberType ScriptMethod -Name Password -Value {([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR((ConvertTo-SecureString $this.EncryptedPassword))))}
+
+    Write-Output $import
+}
+Export-ModuleMember -function Import-DirectoryCredential
+
+#===============================================================================
+
+function Export-DirectoryCredential {
+    param ( $Path = "DirectoryCredential.xml" )
+
+    # Create temporary object to be serialized to disk
+    $export = New-Object System.Management.Automation.PSObject
+    
+    # Give object a type name which can be identified later
+    $export.PSObject.TypeNames.Insert(0,’ExportedDirectoryCredential’)
+    
+    $uid = Read-Host -Prompt "Enter user name"
+    $dmn = Read-Host -Prompt 'Enter domain'
+    $dn = Read-Host -Prompt 'Enter DN'
+    $pw = Read-Host -Prompt 'Enter password' -AsSecureString
+        
+    Add-Member -InputObject $export -MemberType NoteProperty -Name UserID -Value $uid
+    
+    Add-Member -InputObject $export -MemberType NoteProperty -Name Domain -Value $dmn
+    
+    Add-Member -InputObject $export -MemberType NoteProperty -Name DistinguishedName -Value $dn
+    
+    if ($pw.Length -gt 0)
+    {
+        Add-Member -InputObject $export -MemberType NoteProperty -Name EncryptedPassword -Value (ConvertFrom-SecureString $pw)
+    }
+
+    $export | Export-Clixml $Path
+    
+    # Return FileInfo object referring to saved credentials
+    Get-Item $Path
+}
+
+Export-ModuleMember -function Export-DirectoryCredential
+
+#===============================================================================
+
 <#
  .Synopsis
   Imports directory information from an LDIF file.
@@ -121,11 +198,119 @@ function Import-LDIF
 }
 
 
+Export-ModuleMember -Function Import-LDIF
+
+#===============================================================================
+
+$excludedProperties = 'dn','changetype','objectClass','SideIndicator'
+
+function Export-LDIF
+{
+
+    param([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$Path, [parameter(Mandatory=$true,ValueFromPipeline=$true)]$LDIF)
+
+    begin
+    {
+        New-Item $Path -Type File -Force | Out-Null
+
+        $name = Resolve-Path $Path
+    }
+
+    process{
+
+        if ($LDIF -is [array])
+        { 
+            $LDIF | Foreach-Object { Write-LdifEntry $name $_ }
+        }
+
+
+        if ($LDIF -is [System.Management.Automation.PSCustomObject])
+        {
+            Write-LdifEntry $name $LDIF
+        }
+
+    }
+
+    end {
+        #
+        #
+        #
+    }
+
+}
+
+Export-ModuleMember -function Export-LDIF
+
+#===============================================================================
+
+function Write-LdifEntry
+{
+    param($Path,$ldifEntry)
+    
+#    if ($ldifEntry.PsObject.TypeNames -contains 'LDIFEntry')
+#    {
+        $dn = 'dn: {0}' -f $ldifEntry.dn
+        Add-Content $Path $dn
+        
+        if (Get-Member -InputObject $ldifEntry -Name changetype)
+        {
+            $ct = 'changetype: {0}' -f $ldifEntry.changetype
+            Add-Content $Path $ct
+        }
+        
+        if (Get-Member -InputObject $ldifEntry -Name objectClass)
+        {
+            $values = @($ldifEntry.objectClass)
+            $values | Foreach-Object {
+                
+            $oc = 'objectClass: {0}' -f $_
+            Add-Content $Path $oc
+            }
+        }
+        
+        $attributes = Get-Member -InputObject $ldif -MemberType NoteProperty | Where-Object {$excludedProperties -notcontains $_.Name }
+
+        
+        foreach ($attr in $attributes)
+        {
+            $values = @($ldifEntry.$($attr.Name))
+            if ($values)
+            {
+                $values | Sort-Object | Foreach-Object {
+                    if ($attr.Name -match '^(?<attrName>[\w-;]+);binary$') {
+                        $aName = $matches['attrName']
+                        $line = '{0}:: {1}' -f $aName, $_
+                    } else {
+                        $line = '{0}: {1}' -f $attr.Name, $_
+                    }
+                    Add-Content $Path $line
+                }
+            }
+        }
+        
+        Add-Content $Path ''
+        
+#    }
+}
+
+#===============================================================================
+
+function Convert-EscapeDnComponent
+{
+    param([string]$component)
+    
+    return ($component -replace '(?<!\\)[+;,#<>"=/]', '\$&')
+}
+
+Export-ModuleMember Convert-EscapeDnComponent
+
+#===============================================================================
+
 # SIG # Begin signature block
 # MIIO/gYJKoZIhvcNAQcCoIIO7zCCDusCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUy7rTUNhjPxjKAO7wt9YIK+Vs
-# coegggxpMIIFhjCCBG6gAwIBAgIKFhJcIwAAAAAACjANBgkqhkiG9w0BAQUFADBQ
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUE1R6KEuauPPiKPYw96edSxry
+# N4agggxpMIIFhjCCBG6gAwIBAgIKFhJcIwAAAAAACjANBgkqhkiG9w0BAQUFADBQ
 # MRQwEgYKCZImiZPyLGQBGRYEaG9tZTEZMBcGCgmSJomT8ixkARkWCWJvb3RoYmls
 # dDEdMBsGA1UEAxMUQm9vdGhCaWx0LUlzc3VpbmctQ0EwHhcNMTAxMDIyMjIxMTI0
 # WhcNMjAxMDE5MjIxMTI0WjAWMRQwEgYDVQQDEwtKYW1lcyBCb290aDCCASIwDQYJ
@@ -195,12 +380,12 @@ function Import-LDIF
 # aG9tZTEZMBcGCgmSJomT8ixkARkWCWJvb3RoYmlsdDEdMBsGA1UEAxMUQm9vdGhC
 # aWx0LUlzc3VpbmctQ0ECChYSXCMAAAAAAAowCQYFKw4DAhoFAKB4MBgGCisGAQQB
 # gjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYK
-# KwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFDT51YZ0
-# 8bJtBhekzYDUFxMZ3yAjMA0GCSqGSIb3DQEBAQUABIIBAKOHPeImyGe5RdgBBGYE
-# gW6dGvN2ENK/VT+qDmDu973y/3iI+rvfWWVjCH0wvPjPAwhrk/CDnqwpJg3Elfwu
-# /8DY7y7QndgqSJPVkjEZDDbzPqD3n0bFYS4HIK3f8lNk+X3mFOOGENFZiziMgUPc
-# 1cH1+lCX+PBV7EK+D282wIyjC5lghzXLwF4F9JJyssFPqUUkEN7cJqnEsj+kB/nt
-# LpJgpjv2tse8OrTyEKSjLRAscgOTSN1pmfWbNoLFzeRTRLiQHaAyMNqsxF/DHc8W
-# DXxuGoP6X5IVhC88rrQzGRqj2/a2sD6cG/cPYdr7qApQpUo1M/yhpUvuKis0BBCU
-# jMw=
+# KwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFObHtu9I
+# 1wBG93umxlM5K0skRT+hMA0GCSqGSIb3DQEBAQUABIIBANEC6cCVZoXbcgFTtez4
+# f7Eq0y761TMof8eQRvL0RsElsAsgvUVAGjqBcX6ZW5e57Y2imrS2ve1fyyfmpAKB
+# XgTHMEh9CZED0q5v4BOV5vo6sWywDOLPrfnSJ8reSXMc00d4pxhxNNeIHG+jzEYc
+# Pd7z1JItrjajfyNtwH3vXyJG7Gw5YKovCkWkb+IJSh3FUo7GvWAivU6CJ0ZIWryy
+# WbRXv+EpVzkuHIJF68fFd24z9aTxZYYY9L/Lq26SJApoNDaTwnmz3M0X45DTP2t4
+# 1zMdjcc6Cgw6YIYsFET3ew36l5oGwPipvswV86j0WvPDHX2Wa3NhmhL1BJNOHv8v
+# xOc=
 # SIG # End signature block

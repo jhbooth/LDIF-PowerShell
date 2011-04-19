@@ -144,15 +144,13 @@ function Import-LDIF
                 continue
             }
 
-            # Break the line into parts for parsing
-            
-            $parts = $line.Split(':')
-            
-            $attributeName = $parts[0]
 
             # If there are two parts, it is a regular <attribute>: <value> line
-            if ( $parts.Count -eq 2 )
+            if ( $line -match '^(?i)(?<attrName>[a-z][-a-z0-9;]*?):\s(?<attrValue>.+)$')
             {
+                
+                $attributeName = $matches['attrName']
+                $attributeValue = $matches['attrValue']
                 
                 if (Get-Member -InputObject $ldifEntry -Name $attributeName)
                 {
@@ -161,17 +159,24 @@ function Import-LDIF
                         $vals = $ldifEntry.$attributeName
                         $ldifEntry.$attributeName = @($vals)
                     }
-                    $ldifEntry.$attributeName += $($parts[1].Trim())
+                    $ldifEntry.$attributeName += $attributeValue
                 }
                 else
                 {
-                    Add-Member -InputObject $ldifEntry -Name $attributeName -Value $parts[1].Trim() -MemberType NoteProperty
+                    Add-Member -InputObject $ldifEntry -Name $attributeName -Value $attributeValue -MemberType NoteProperty
                 }
             }
             
-            if ( $parts.Count -eq 3 ) # means we have a binary attribute
+            if ( $line -match '^(?i)(?<attrName>[a-z][-a-z0-9;]*?)::\s(?<attrValue>.+)$') # means we have a binary attribute
             {
-                $attributeName += ';binary'
+                $attributeName = $matches['attrName']
+                $attributeValue = $matches['attrValue']
+
+                if ($attributeName -notmatch ';binary$')
+                {
+                    $attributeName += ';binary'
+                }
+                
                 if (Get-Member -InputObject $ldifEntry -Name $attributeName)
                 {
                     if ($ldifEntry.$attributeName.GetType().Name -ne 'Object[]')
@@ -180,11 +185,11 @@ function Import-LDIF
                         $ldifEntry.$attributeName = @($vals)
                     }
 
-                    $ldifEntry.$attributeName += $($parts[2].Trim())
+                    $ldifEntry.$attributeName += $attributeValue
                 }
                 else
                 {
-                    Add-Member -InputObject $ldifEntry -Name $attributeName -Value $parts[2].Trim() -MemberType NoteProperty
+                    Add-Member -InputObject $ldifEntry -Name $attributeName -Value $attributeValue -MemberType NoteProperty
                 }
             }
         }

@@ -1,5 +1,6 @@
 ﻿namespace BoothBilt.Utility.LdifTool
 {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -13,6 +14,8 @@
     [Cmdlet(VerbsData.Export, "Ldif")]
     sealed public class ExportLdifCommand : Cmdlet, IDisposable
     {
+        // $excludedProperties = 'dn','changetype','objectClass','SideIndicator'
+
         #region Class Members
         StreamWriter ldifStreamWriter;
         #endregion
@@ -114,3 +117,51 @@
         #endregion
     }
 }
+/*
+function Write-LdifEntry
+{
+    param($Path,$ldifEntry)
+
+        $dn = 'dn: {0}' -f $ldifEntry.dn
+        $Path.WriteLine($dn)
+
+        if (Get-Member -InputObject $ldifEntry -Name changetype)
+        {
+            $ct = 'changetype: {0}' -f $ldifEntry.changetype
+            $Path.WriteLine($ct)
+        }
+
+        if (Get-Member -InputObject $ldifEntry -Name objectClass)
+        {
+            $values = @($ldifEntry.objectClass)
+            $values | Foreach-Object {
+
+            $oc = 'objectClass: {0}' -f $_
+            $Path.WriteLine($oc)
+            }
+        }
+
+        $attributes = Get-Member -InputObject $ldif -MemberType NoteProperty | Where-Object {$excludedProperties -notcontains $_.Name }
+
+
+        foreach ($attr in $attributes)
+        {
+            $values = @($ldifEntry.$($attr.Name))
+            if ($values)
+            {
+                $values | Sort-Object | Foreach-Object {
+                    if ($attr.Name -match '^(?<attrName>[\w-;]+)_binary$') {
+                        $aName = $matches['attrName']
+                        $line = '{0}:: {1}' -f $aName, $_
+                    } else {
+                        $line = '{0}: {1}' -f $attr.Name, $_
+                    }
+                    $Path.WriteLine($line)
+                }
+            }
+        }
+
+        $Path.WriteLine('')
+
+}
+*/

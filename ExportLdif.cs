@@ -18,6 +18,7 @@
 
         #region Class Members
         StreamWriter ldifStreamWriter;
+        Regex binaryAttribute = new Regex(@"^(?<attrName>[\w-;]+)_binary$", RegexOptions.IgnoreCase);
         #endregion
 
         #region Parameters
@@ -30,7 +31,7 @@
         public string LiteralPath { get; set; }
 
         [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true)]
-        public Collection<PSObject> ldifEntry;
+        public Collection<PSObject> ldifObjects;
         #endregion
 
         #region Protected Override Methods
@@ -61,38 +62,142 @@
 
         protected override void ProcessRecord()
         {
-            ldifStreamWriter.WriteLine(ldifEntry.Count);
-        }
-
-            /*
-    process{
-
-        try
-        {
-            if ($LDIF -is [array])
+            PSMemberInfoCollection<PSPropertyInfo> properties;
+            ReadOnlyPSMemberInfoCollection<PSPropertyInfo> propertyValues;
+            PSPropertyInfo ps;
+            foreach (PSObject entry in this.ldifObjects)
             {
-                $LDIF | Foreach-Object { Write-LdifEntry $stream $_ }
-            }
+                properties = entry.Properties;
 
+                // Find the DN and output it first
+                propertyValues = properties.Match("dn", PSMemberTypes.NoteProperty);
+                if (propertyValues.Count > 0)
+                {
+                    properties.Remove("dn");
+                    ps = propertyValues[0];
+                    ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", ps.Name, ps.Value));
+                }
 
-            if ($LDIF -is [System.Management.Automation.PSCustomObject])
-            {
-                Write-LdifEntry $stream $LDIF
+                propertyValues = properties.Match("changetype", PSMemberTypes.NoteProperty);
+                if (propertyValues.Count > 0)
+                {
+                    properties.Remove("changetype");
+                    ps = propertyValues[0];
+                    ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", ps.Name, ps.Value));
+                }
+
+                propertyValues = properties.Match("objectclass");
+                if (propertyValues.Count > 0)
+                {
+                    properties.Remove("objectclass");
+                    ps = propertyValues[0];
+                    if (ps.TypeNameOfValue == "System.Collections.ArrayList")
+                    {
+                        foreach (string s in (System.Collections.ArrayList)ps.Value)
+                        {
+                            ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", ps.Name, s));
+                        }
+                    }
+                }
+
+                propertyValues = properties.Match("sideIndicator");
+                if (propertyValues.Count > 0)
+                {
+                    properties.Remove("sideIndicator");
+
+                }
+
+                foreach (PSPropertyInfo p in properties)
+                {
+                    switch (p.TypeNameOfValue)
+                    {
+                        case "System.String":
+                            if (binaryAttribute.IsMatch(p.Name))
+                            {
+                                string aName = binaryAttribute.Match(p.Name).Groups["attrName"].Value;
+                                ldifStreamWriter.WriteLine(string.Format(@"{0}:: {1}", aName, p.Value));
+                            }
+                            else
+                            {
+                                ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", p.Name, p.Value));
+                            }
+
+                            break;
+
+                        case "System.Collections.ArrayList":
+
+                            if (binaryAttribute.IsMatch(p.Name))
+                            {
+                                string aName = binaryAttribute.Match(p.Name).Groups["attrName"].Value;
+                                foreach (string s in (System.Collections.ArrayList)p.Value)
+                                {
+                                    ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", aName, s));
+                                }
+                            }
+                            else
+                            {
+                                foreach (string s in (System.Collections.ArrayList)p.Value)
+                                {
+                                    ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", p.Name, s));
+                                }
+                            }
+
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+
+                ldifStreamWriter.WriteLine();
             }
         }
-        catch
+
+        protected override void EndProcessing()
         {
-            if ($stream)
+            if (ldifStreamWriter != null)
             {
-                $stream.Dispose()
-                $stream = $null
+                ldifStreamWriter.Dispose();
             }
+        }
 
-        }
-        finally
+        protected override void StopProcessing()
         {
+            if (ldifStreamWriter != null)
+            {
+                ldifStreamWriter.Dispose();
+            }
         }
-        */
+
+        /*
+process{
+
+    try
+    {
+        if ($LDIF -is [array])
+        {
+            $LDIF | Foreach-Object { Write-LdifEntry $stream $_ }
+        }
+
+
+        if ($LDIF -is [System.Management.Automation.PSCustomObject])
+        {
+            Write-LdifEntry $stream $LDIF
+        }
+    }
+    catch
+    {
+        if ($stream)
+        {
+            $stream.Dispose()
+            $stream = $null
+        }
+
+    }
+    finally
+    {
+    }
+    */
 
         #endregion
 

@@ -1,6 +1,5 @@
 ﻿namespace BoothBilt.Utility.LdifTool
 {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -14,11 +13,10 @@
     [Cmdlet(VerbsData.Export, "Ldif")]
     sealed public class ExportLdifCommand : Cmdlet, IDisposable
     {
-        // $excludedProperties = 'dn','changetype','objectClass','SideIndicator'
-
         #region Class Members
         StreamWriter ldifStreamWriter;
         Regex binaryAttribute = new Regex(@"^(?<attrName>[\w-;]+)_binary$", RegexOptions.IgnoreCase);
+        List<string> excludedProperties = new List<string>();
         #endregion
 
         #region Parameters
@@ -58,6 +56,9 @@
             {
                 ThrowTerminatingError(new ErrorRecord(ex, "1", ErrorCategory.OpenError, ldifStreamWriter));
             }
+            this.excludedProperties.Add("dn");
+            this.excludedProperties.Add("changetype");
+            this.excludedProperties.Add("objectclass");
         }
 
         protected override void ProcessRecord()
@@ -73,7 +74,6 @@
                 propertyValues = properties.Match("dn", PSMemberTypes.NoteProperty);
                 if (propertyValues.Count > 0)
                 {
-                    properties.Remove("dn");
                     ps = propertyValues[0];
                     ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", ps.Name, ps.Value));
                 }
@@ -81,7 +81,6 @@
                 propertyValues = properties.Match("changetype", PSMemberTypes.NoteProperty);
                 if (propertyValues.Count > 0)
                 {
-                    properties.Remove("changetype");
                     ps = propertyValues[0];
                     ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", ps.Name, ps.Value));
                 }
@@ -89,7 +88,6 @@
                 propertyValues = properties.Match("objectclass");
                 if (propertyValues.Count > 0)
                 {
-                    properties.Remove("objectclass");
                     ps = propertyValues[0];
                     if (ps.TypeNameOfValue == "System.Collections.ArrayList")
                     {
@@ -104,11 +102,15 @@
                 if (propertyValues.Count > 0)
                 {
                     properties.Remove("sideIndicator");
-
                 }
 
                 foreach (PSPropertyInfo p in properties)
                 {
+                    if (this.excludedProperties.Contains(p.Name.ToLowerInvariant()))
+                    {
+                        continue;
+                    }
+                    
                     switch (p.TypeNameOfValue)
                     {
                         case "System.String":
@@ -131,7 +133,7 @@
                                 string aName = binaryAttribute.Match(p.Name).Groups["attrName"].Value;
                                 foreach (string s in (System.Collections.ArrayList)p.Value)
                                 {
-                                    ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", aName, s));
+                                    ldifStreamWriter.WriteLine(string.Format(@"{0}:: {1}", aName, s));
                                 }
                             }
                             else
@@ -169,36 +171,6 @@
             }
         }
 
-        /*
-process{
-
-    try
-    {
-        if ($LDIF -is [array])
-        {
-            $LDIF | Foreach-Object { Write-LdifEntry $stream $_ }
-        }
-
-
-        if ($LDIF -is [System.Management.Automation.PSCustomObject])
-        {
-            Write-LdifEntry $stream $LDIF
-        }
-    }
-    catch
-    {
-        if ($stream)
-        {
-            $stream.Dispose()
-            $stream = $null
-        }
-
-    }
-    finally
-    {
-    }
-    */
-
         #endregion
 
         #region IDisposable implementation
@@ -222,51 +194,3 @@ process{
         #endregion
     }
 }
-/*
-function Write-LdifEntry
-{
-    param($Path,$ldifEntry)
-
-        $dn = 'dn: {0}' -f $ldifEntry.dn
-        $Path.WriteLine($dn)
-
-        if (Get-Member -InputObject $ldifEntry -Name changetype)
-        {
-            $ct = 'changetype: {0}' -f $ldifEntry.changetype
-            $Path.WriteLine($ct)
-        }
-
-        if (Get-Member -InputObject $ldifEntry -Name objectClass)
-        {
-            $values = @($ldifEntry.objectClass)
-            $values | Foreach-Object {
-
-            $oc = 'objectClass: {0}' -f $_
-            $Path.WriteLine($oc)
-            }
-        }
-
-        $attributes = Get-Member -InputObject $ldif -MemberType NoteProperty | Where-Object {$excludedProperties -notcontains $_.Name }
-
-
-        foreach ($attr in $attributes)
-        {
-            $values = @($ldifEntry.$($attr.Name))
-            if ($values)
-            {
-                $values | Sort-Object | Foreach-Object {
-                    if ($attr.Name -match '^(?<attrName>[\w-;]+)_binary$') {
-                        $aName = $matches['attrName']
-                        $line = '{0}:: {1}' -f $aName, $_
-                    } else {
-                        $line = '{0}: {1}' -f $attr.Name, $_
-                    }
-                    $Path.WriteLine($line)
-                }
-            }
-        }
-
-        $Path.WriteLine('')
-
-}
-*/

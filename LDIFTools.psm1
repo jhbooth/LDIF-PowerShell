@@ -37,8 +37,6 @@ function Import-DirectoryCredential {
 
     Write-Output $import
 }
-Export-ModuleMember -Function Import-DirectoryCredential
-
 #===============================================================================
 
 <#
@@ -90,8 +88,6 @@ function Export-DirectoryCredential {
     Get-Item $Path
 }
 
-Export-ModuleMember -Function Export-DirectoryCredential
-
 #===============================================================================
 
 function Send-LDIF
@@ -120,7 +116,6 @@ function Send-LDIF
     }
 
 }
-Export-ModuleMember -Function Send-LDIF
 
 #===============================================================================
 

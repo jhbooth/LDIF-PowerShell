@@ -45,7 +45,6 @@
             }
             else
             {
-                //SessionState ss = new SessionState();
                 path = Path.GetFullPath(Path.Combine((new SessionState()).Path.CurrentFileSystemLocation.Path, this.LiteralPath));
             }
 
@@ -182,9 +181,6 @@
             }
         }
 
-        #endregion
-
-        #region Private Methods
         #endregion
 
         #region IDisposable implementation

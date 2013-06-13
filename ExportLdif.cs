@@ -145,6 +145,26 @@
 
                             break;
 
+                        case "System.String[]":
+
+                            if (binaryAttribute.IsMatch(p.Name))
+                            {
+                                string aName = binaryAttribute.Match(p.Name).Groups["attrName"].Value;
+                                foreach (string s in (String[])p.Value)
+                                {
+                                    ldifStreamWriter.WriteLine(string.Format(@"{0}:: {1}", aName, s));
+                                }
+                            }
+                            else
+                            {
+                                foreach (string s in (String[])p.Value)
+                                {
+                                    ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", p.Name, s));
+                                }
+                            }
+
+                            break;
+
                         default:
                             break;
                     }

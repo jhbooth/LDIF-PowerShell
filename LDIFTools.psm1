@@ -18,22 +18,23 @@
    # Import directory credentials from file called TestUser.xml
    Import-DirectoryCredential '.\TestUser.xml'
 #>
-function Import-DirectoryCredential {
+function Import-DirectoryCredential
+{
     [CmdletBinding()]
-    param ( $Path = "DirectoryCredential.xml" )
+    param ($Path = "DirectoryCredential.xml")
 
     # Import credential file
     $import = Import-Clixml $Path
 
     # Test for valid import
-    if ( $import.PSObject.TypeNames -notcontains 'Deserialized.ExportedDirectoryCredential' )
+    if ($import.PSObject.TypeNames -notcontains 'Deserialized.ExportedDirectoryCredential')
     {
         Throw "Input is not a valid ExportedDirectoryCredential object, exiting."
     }
 
     Add-Member -InputObject $import -MemberType AliasProperty -Name DN -Value DistinguishedName
     Add-Member -InputObject $import -MemberType AliasProperty -Name ID -Value UserID
-    Add-Member -InputObject $import -MemberType ScriptMethod -Name Password -Value {([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR((ConvertTo-SecureString $this.EncryptedPassword))))}
+    Add-Member -InputObject $import -MemberType ScriptMethod -Name Password -Value { ([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR((ConvertTo-SecureString $this.EncryptedPassword)))) }
 
     Write-Output $import
 }
@@ -42,7 +43,7 @@ function Import-DirectoryCredential {
 <#
  .Synopsis
   Exports directory credentials to a file
- 
+
  .Description
   Exports directory credentials to a file, by creating a custom PowerShell object and exporting it.
 
@@ -57,14 +58,15 @@ function Import-DirectoryCredential {
    # Export directory credentials to a file called TestUser.xml
    Export-DirectoryCredential '.\TestUser.xml'
 #>
-function Export-DirectoryCredential {
-    param ( $Path = "DirectoryCredential.xml" )
+function Export-DirectoryCredential
+{
+    param ($Path = "DirectoryCredential.xml")
 
     # Create temporary object to be serialized to disk
     $export = New-Object System.Management.Automation.PSObject
 
     # Give object a type name which can be identified later
-    $export.PSObject.TypeNames.Insert(0,’ExportedDirectoryCredential’)
+    $export.PSObject.TypeNames.Insert(0, ’ExportedDirectoryCredential’)
 
     $uid = Read-Host -Prompt "Enter user name"
     $dmn = Read-Host -Prompt 'Enter domain'
@@ -93,7 +95,7 @@ function Export-DirectoryCredential {
 function Send-LDIF
 {
     [CmdletBinding()]
-    param([parameter(Mandatory=$true)]$ldif, [string]$server = "localhost", [int]$port = 389, [string]$tag = "LDS")
+    param ([parameter(Mandatory = $true)]$ldif, [string]$server = "localhost", [int]$port = 389, [string]$tag = "LDS")
 
     # Get the credentials we need to do the search
     $credentialFile = ('{0}\{1}-{2}-{3}.xml' -f $HOME, $env:USERNAME, $env:COMPUTERNAME, $tag)
@@ -122,7 +124,7 @@ function Send-LDIF
 function New-DirectoryCredentialXml
 {
     [CmdletBinding()]
-    param([parameter(Mandatory=$true)]$tag)
+    param ([parameter(Mandatory = $true)]$tag)
 
     $credFile = '{0}\{1}_{2}_{3}.xml' -f $HOME, $env:USERNAME, $env:COMPUTERNAME, $tag
 
@@ -135,7 +137,7 @@ Export-ModuleMember -Function New-DirectoryCredentialXml
 function Convert-EscapeDnComponent
 {
     [CmdletBinding()]
-    param([parameter(Mandatory=$true)][string]$token)
+    param ([parameter(Mandatory = $true)][string]$token)
 
     $result = ($token -replace '(?<!\\)[+;,#<>"=]', '\$&')
 
@@ -146,6 +148,6 @@ Export-ModuleMember -Function Convert-EscapeDnComponent
 
 #===============================================================================
 
-Export-ModuleMember -Cmdlet Export-Ldif,Import-Ldif
+Export-ModuleMember -Cmdlet Export-Ldif, Import-Ldif
 
 #===============================================================================

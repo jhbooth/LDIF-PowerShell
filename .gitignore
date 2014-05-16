@@ -32,3 +32,5 @@ _ReSharper*/
 # Ignore zip files
 *.zip
 *.zipx
+# Ignore PowerShell Studio temp files
+*.TempPoint.*

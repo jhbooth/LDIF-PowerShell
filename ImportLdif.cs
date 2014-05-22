@@ -27,7 +27,7 @@
         /// LiteralPath parameter is for specifying path to LDIF file
         /// </summary>
         [Alias("Path")]
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
         public string LiteralPath { get; set; }
 
@@ -131,7 +131,7 @@
                             if (line == null) { break; }
                         } while (!Regex.IsMatch(line, @"^$"));
 
-                        WriteError(new ErrorRecord(new InvalidDataException(string.Format("Invalid changetype: {0}",attrValue)), "errid", ErrorCategory.InvalidArgument, ldifEntry));
+                        WriteError(new ErrorRecord(new InvalidDataException(string.Format("Invalid changetype: {0}", attrValue)), "errid", ErrorCategory.InvalidArgument, ldifEntry));
 
                         continue;
                     }

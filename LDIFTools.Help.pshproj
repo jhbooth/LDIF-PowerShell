@@ -5,158 +5,11 @@
   <Version>1.0.1.0</Version>
   <Description>Functions for working with LDIF files</Description>
   <ModuleClass>External</ModuleClass>
-  <ModulePath>E:\src\LDIFTools\bin\Debug\LDIFTools.psd1</ModulePath>
+  <ModulePath>E:\src\LDIFTools\LDIFTools.psd1</ModulePath>
   <UseSupports>false</UseSupports>
   <OverridePostCount>false</OverridePostCount>
   <FetchPostCount xsi:nil="true" />
   <Cmdlets>
-    <CmdletObject>
-      <Name>Convert-EscapeDnComponent</Name>
-      <Verb>Convert</Verb>
-      <Noun>EscapeDnComponent</Noun>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <Syntax>
-        <string>Convert-EscapeDnComponent [-token] &lt;String&gt;</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription>
-          <Name>token</Name>
-          <Type>String</Type>
-          <AcceptsArray>false</AcceptsArray>
-          <Mandatory>true</Mandatory>
-          <Dynamic>false</Dynamic>
-          <RemainingArgs>false</RemainingArgs>
-          <Pipeline>false</Pipeline>
-          <PipelinePropertyName>false</PipelinePropertyName>
-          <Positional>true</Positional>
-          <Position>0</Position>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-          <Globbing>false</Globbing>
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation>
-        <ADChecked>false</ADChecked>
-        <RsatChecked>false</RsatChecked>
-        <Ps2Checked>false</Ps2Checked>
-        <Ps3Checked>false</Ps3Checked>
-        <Ps4Checked>false</Ps4Checked>
-        <WinXpChecked>false</WinXpChecked>
-        <WinVistaChecked>false</WinVistaChecked>
-        <Win7Checked>false</Win7Checked>
-        <Win8Checked>false</Win8Checked>
-        <Win81Checked>false</Win81Checked>
-        <Win2003Checked>false</Win2003Checked>
-        <Win2003StdChecked>false</Win2003StdChecked>
-        <Win2003EEChecked>false</Win2003EEChecked>
-        <Win2003DCChecked>false</Win2003DCChecked>
-        <Win2008Checked>false</Win2008Checked>
-        <Win2008StdChecked>false</Win2008StdChecked>
-        <Win2008EEChecked>false</Win2008EEChecked>
-        <Win2008DCChecked>false</Win2008DCChecked>
-        <Win2008R2Checked>false</Win2008R2Checked>
-        <Win2008R2StdChecked>false</Win2008R2StdChecked>
-        <Win2008R2EEChecked>false</Win2008R2EEChecked>
-        <Win2008R2DCChecked>false</Win2008R2DCChecked>
-        <Win2012Checked>false</Win2012Checked>
-        <Win2012StdChecked>false</Win2012StdChecked>
-        <Win2012DCChecked>false</Win2012DCChecked>
-        <Win2012R2Checked>false</Win2012R2Checked>
-        <Win2012R2StdChecked>false</Win2012R2StdChecked>
-        <Win2012R2DCChecked>false</Win2012R2DCChecked>
-      </SupportInformation>
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject>
-      <Name>New-DirectoryCredentialXml</Name>
-      <Verb>New</Verb>
-      <Noun>DirectoryCredentialXml</Noun>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <Syntax>
-        <string>New-DirectoryCredentialXml [-tag] &lt;Object&gt;</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription>
-          <Name>tag</Name>
-          <Type>Object</Type>
-          <AcceptsArray>false</AcceptsArray>
-          <Mandatory>true</Mandatory>
-          <Dynamic>false</Dynamic>
-          <RemainingArgs>false</RemainingArgs>
-          <Pipeline>false</Pipeline>
-          <PipelinePropertyName>false</PipelinePropertyName>
-          <Positional>true</Positional>
-          <Position>0</Position>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-          <Globbing>false</Globbing>
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation>
-        <ADChecked>false</ADChecked>
-        <RsatChecked>false</RsatChecked>
-        <Ps2Checked>false</Ps2Checked>
-        <Ps3Checked>false</Ps3Checked>
-        <Ps4Checked>false</Ps4Checked>
-        <WinXpChecked>false</WinXpChecked>
-        <WinVistaChecked>false</WinVistaChecked>
-        <Win7Checked>false</Win7Checked>
-        <Win8Checked>false</Win8Checked>
-        <Win81Checked>false</Win81Checked>
-        <Win2003Checked>false</Win2003Checked>
-        <Win2003StdChecked>false</Win2003StdChecked>
-        <Win2003EEChecked>false</Win2003EEChecked>
-        <Win2003DCChecked>false</Win2003DCChecked>
-        <Win2008Checked>false</Win2008Checked>
-        <Win2008StdChecked>false</Win2008StdChecked>
-        <Win2008EEChecked>false</Win2008EEChecked>
-        <Win2008DCChecked>false</Win2008DCChecked>
-        <Win2008R2Checked>false</Win2008R2Checked>
-        <Win2008R2StdChecked>false</Win2008R2StdChecked>
-        <Win2008R2EEChecked>false</Win2008R2EEChecked>
-        <Win2008R2DCChecked>false</Win2008R2DCChecked>
-        <Win2012Checked>false</Win2012Checked>
-        <Win2012StdChecked>false</Win2012StdChecked>
-        <Win2012DCChecked>false</Win2012DCChecked>
-        <Win2012R2Checked>false</Win2012R2Checked>
-        <Win2012R2StdChecked>false</Win2012R2StdChecked>
-        <Win2012R2DCChecked>false</Win2012R2DCChecked>
-      </SupportInformation>
-      <Publish>false</Publish>
-    </CmdletObject>
     <CmdletObject>
       <Name>Read-Ldif</Name>
       <Verb>Read</Verb>
@@ -174,7 +27,7 @@
       </GeneralHelp>
       <Syntax>
         <string>Read-Ldif -Path &lt;String&gt; [-Server &lt;String&gt;] [-Port &lt;Int32&gt;] [-SearchBase &lt;String&gt;] [-LdapFilter &lt;String&gt;] [-Scope &lt;String&gt; {Base | OneLevel | Subtree} ] [-Include &lt;String[]&gt;] [-Exclude &lt;String[]&gt;] [-Ldifde] [-Credential &lt;PSCredential&gt;]</string>
-        <string>Read-Ldif [-Server &lt;String&gt;] [-Port &lt;Int32&gt;] [-SearchBase &lt;String&gt;] [-LdapFilter &lt;String&gt;] [-Scope &lt;String&gt; {Base | OneLevel | Subtree} ] [-Include &lt;String[]&gt;] [-Laimex] [-Credential &lt;PSCredential&gt;]</string>
+        <string>Read-Ldif [-Path &lt;String&gt;] [-Server &lt;String&gt;] [-Port &lt;Int32&gt;] [-SearchBase &lt;String&gt;] [-LdapFilter &lt;String&gt;] [-Scope &lt;String&gt; {Base | OneLevel | Subtree} ] [-Include &lt;String[]&gt;] [-Laimex] [-Credential &lt;PSCredential&gt;]</string>
       </Syntax>
       <Parameters>
         <ParameterDescription>
@@ -190,6 +43,7 @@
           <Position>named</Position>
           <Attributes>
             <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
             <string>System.Management.Automation.ValidateNotNullOrEmptyAttribute</string>
@@ -452,8 +306,8 @@
       <Verb>Export</Verb>
       <Noun>Ldif</Noun>
       <GeneralHelp>
-        <Synopsis />
-        <Description />
+        <Synopsis>Exports LDIF entries to file.</Synopsis>
+        <Description>Writes LDIF entries (represented as PSObjects) to file.</Description>
         <Notes />
         <InputType />
         <InputUrl />
@@ -485,7 +339,7 @@
           <Aliases>
             <string>Path</string>
           </Aliases>
-          <Description />
+          <Description>Output file name where LDIF entries will be written.</Description>
           <DefaultValue />
           <Globbing>false</Globbing>
         </ParameterDescription>
@@ -504,7 +358,7 @@
             <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases />
-          <Description />
+          <Description>Array of PSObjects representing LDIF entries to be written to file.</Description>
           <DefaultValue />
           <Globbing>false</Globbing>
         </ParameterDescription>
@@ -581,7 +435,7 @@
           <Aliases>
             <string>Path</string>
           </Aliases>
-          <Description />
+          <Description>Path to the LDIF file to read.</Description>
           <DefaultValue />
           <Globbing>false</Globbing>
         </ParameterDescription>

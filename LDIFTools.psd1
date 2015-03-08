@@ -22,7 +22,7 @@ Author = 'James Booth'
 CompanyName = 'BoothBilt'
 
 # Copyright statement for this module
-Copyright = '(c) 2012-2014 James Booth. All rights reserved.'
+Copyright = '(c) 2012-2015 James Booth. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'Functions for working with LDIF files'
@@ -61,7 +61,7 @@ TypesToProcess = @()
 FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in ModuleToProcess
-NestedModules = @("ldiftools.dll","ldiftools.psm1","ReadLdif.psm1")
+NestedModules = @("ldiftools.dll","ReadLdif.psm1")
 
 # Functions to export from this module
 FunctionsToExport = '*'

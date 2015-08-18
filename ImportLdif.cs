@@ -1,5 +1,6 @@
 ﻿namespace BoothBilt.Utility.LdifTool
 {
+    using BoothBilt.Utility.LdifTool;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -19,6 +20,8 @@
         Regex attributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?):\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         Regex binaryAttributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?)(;binary)?::\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        ScriptBlock reverseDNScriptBlock = ScriptBlock.Create(@"$x = $this.dn -split '(?<!\\),';[array]::Reverse($x);$x -join ','");
 
         #endregion
 
@@ -99,6 +102,13 @@
                 if (Regex.IsMatch(line, @"^$", RegexOptions.IgnoreCase))
                 {
                     WriteObject(ldifEntry);
+
+                    // get rid of extra blank lines
+                    while (ldifStreamReader.Peek() == 0x0D)
+                    {
+                        ldifStreamReader.ReadLine();
+                    }
+
                     continue;
                 }
 

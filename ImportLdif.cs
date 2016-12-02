@@ -74,7 +74,7 @@
                 while (ldifStreamReader.Peek() == 32)
                 {
                     string continuation = ldifStreamReader.ReadLine();
-                    line += continuation.Trim();
+                    line += continuation.Substring(1);
                 }
 
                 //  If the version marker is there, ignore it

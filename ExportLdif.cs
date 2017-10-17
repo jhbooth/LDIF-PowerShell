@@ -5,6 +5,7 @@
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Management.Automation;
+    using System.Text;
     using System.Text.RegularExpressions;
 
     [System.Runtime.InteropServices.ComVisible(false)]
@@ -12,12 +13,15 @@
     sealed public class ExportLdifCommand : Cmdlet, IDisposable
     {
         #region Class Members
-        StreamWriter ldifStreamWriter;
-        Regex binaryAttribute = new Regex(@"^(?<attrName>[\w-;]+)_binary$", RegexOptions.IgnoreCase);
-        List<string> excludedProperties = new List<string>();
-        #endregion
+
+        private StreamWriter ldifStreamWriter;
+        private Regex binaryAttribute = new Regex(@"^(?<attrName>[\w-;]+)_binary$", RegexOptions.IgnoreCase);
+        private List<string> excludedProperties = new List<string>();
+
+        #endregion Class Members
 
         #region Parameters
+
         /// <summary>
         /// LiteralPath parameter is for specifying path to LDIF file
         /// </summary>
@@ -28,7 +32,8 @@
 
         [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true)]
         public Collection<PSObject> ldifObjects;
-        #endregion
+
+        #endregion Parameters
 
         #region Protected Override Methods
 
@@ -47,7 +52,7 @@
 
             try
             {
-                ldifStreamWriter = new StreamWriter(path);
+                ldifStreamWriter = new StreamWriter(path, false, Encoding.Default);
             }
             catch (Exception ex)
             {
@@ -107,7 +112,7 @@
                     {
                         continue;
                     }
-                    
+
                     switch (p.TypeNameOfValue)
                     {
                         case "System.String":
@@ -188,9 +193,10 @@
             }
         }
 
-        #endregion
+        #endregion Protected Override Methods
 
         #region IDisposable implementation
+
         public void Dispose()
         {
             Dispose(true);
@@ -208,6 +214,7 @@
                 }
             }
         }
-        #endregion
+
+        #endregion IDisposable implementation
     }
 }

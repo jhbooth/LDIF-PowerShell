@@ -1,9 +1,7 @@
 ﻿namespace BoothBilt.Utility.LdifTool
 {
-    using BoothBilt.Utility.LdifTool;
     using System;
     using System.Collections;
-    using System.Collections.Generic;
     using System.IO;
     using System.Management.Automation;
     using System.Text;
@@ -15,17 +13,18 @@
     {
         #region Class Members
 
-        StreamReader ldifStreamReader;
+        private StreamReader ldifStreamReader;
 
-        Regex attributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?):\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private Regex attributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?):\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        Regex binaryAttributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?)(;binary)?::\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private Regex binaryAttributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?)(;binary)?::\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        ScriptBlock reverseDNScriptBlock = ScriptBlock.Create(@"$x = $this.dn -split '(?<!\\),';[array]::Reverse($x);$x -join ','");
+        private ScriptBlock reverseDNScriptBlock = ScriptBlock.Create(@"$x = $this.dn -split '(?<!\\),';[array]::Reverse($x);$x -join ','");
 
-        #endregion
+        #endregion Class Members
 
         #region Parameters
+
         /// <summary>
         /// LiteralPath parameter is for specifying path to LDIF file
         /// </summary>
@@ -34,7 +33,7 @@
         [ValidateNotNullOrEmpty]
         public string LiteralPath { get; set; }
 
-        #endregion
+        #endregion Parameters
 
         #region Protected Override Methods
 
@@ -53,7 +52,8 @@
 
             try
             {
-                ldifStreamReader = File.OpenText(path);
+                // Open with default encoding to read high order ASCII characters (accented characters primarily)
+                ldifStreamReader = new StreamReader(path, Encoding.Default);
             }
             catch (Exception ex)
             {
@@ -166,7 +166,6 @@
                             lst.Add(attrValue);
                         }
                     }
-
                 }
                 else
                 {
@@ -191,9 +190,10 @@
             }
         }
 
-        #endregion
+        #endregion Protected Override Methods
 
         #region IDisposable implementation
+
         public void Dispose()
         {
             Dispose(true);
@@ -211,6 +211,7 @@
                 }
             }
         }
-        #endregion
+
+        #endregion IDisposable implementation
     }
 }

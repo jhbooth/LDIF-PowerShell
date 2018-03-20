@@ -10,7 +10,7 @@
 
     [System.Runtime.InteropServices.ComVisible(false)]
     [Cmdlet(VerbsData.Export, "Ldif")]
-    sealed public class ExportLdifCommand : Cmdlet, IDisposable
+    sealed public class ExportLdifCommand : PSCmdlet, IDisposable
     {
         #region Class Members
 
@@ -33,6 +33,9 @@
         [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true)]
         public Collection<PSObject> ldifObjects;
 
+        [Parameter]
+        public SwitchParameter Unicode { get; set; }
+
         #endregion Parameters
 
         #region Protected Override Methods
@@ -50,9 +53,18 @@
                 path = Path.GetFullPath(Path.Combine((new SessionState()).Path.CurrentFileSystemLocation.Path, this.LiteralPath));
             }
 
+            WriteDebug(string.Format(@"Output path is {0}", path));
+
             try
             {
-                ldifStreamWriter = new StreamWriter(path, false, Encoding.Default);
+                if (Unicode)
+                {
+                    ldifStreamWriter = new StreamWriter(path, false, Encoding.Unicode);
+                }
+                else
+                {
+                    ldifStreamWriter = new StreamWriter(path, false, Encoding.Default);
+                }
             }
             catch (Exception ex)
             {
@@ -97,6 +109,11 @@
                         {
                             ldifStreamWriter.WriteLine(string.Format(@"{0}: {1}", ps.Name, s));
                         }
+                    }
+                    else
+                    {
+                        WriteDebug(ps.TypeNameOfValue);
+                        ldifStreamWriter.WriteLine(string.Format(@"objectClass: {0}", (string)propertyValues[0].Value));
                     }
                 }
 

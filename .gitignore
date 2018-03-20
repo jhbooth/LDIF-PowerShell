@@ -29,8 +29,11 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+.vs/
 # Ignore zip files
 *.zip
 *.zipx
 # Ignore PowerShell Studio temp files
 *.TempPoint.*
+# Ignore NuGet packages directory
+**/packages/

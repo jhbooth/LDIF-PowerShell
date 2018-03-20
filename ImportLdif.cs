@@ -9,17 +9,23 @@
 
     [System.Runtime.InteropServices.ComVisible(false)]
     [Cmdlet(VerbsData.Import, "Ldif")]
-    sealed public class ImportLdifCommand : Cmdlet, IDisposable
+    sealed public class ImportLdifCommand : PSCmdlet, IDisposable
     {
         #region Class Members
 
         private StreamReader ldifStreamReader;
+
+        private Regex dnCheck = new Regex(@"\Adn::?\s(?<dnValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private Regex attributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?):\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private Regex binaryAttributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?)(;binary)?::\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private ScriptBlock reverseDNScriptBlock = ScriptBlock.Create(@"$x = $this.dn -split '(?<!\\),';[array]::Reverse($x);$x -join ','");
+
+        //private bool wasSpecified = MyInvocation.BoundParameters.ContainsKey("SchemaMap");
+
+        private bool haveMap;
 
         #endregion Class Members
 
@@ -33,6 +39,13 @@
         [ValidateNotNullOrEmpty]
         public string LiteralPath { get; set; }
 
+        [Alias("Map")]
+        [Parameter(Mandatory = false)]
+        public Hashtable SchemaMap { get; set; }
+
+        [Parameter]
+        public SwitchParameter Unicode { get; set; }
+
         #endregion Parameters
 
         #region Protected Override Methods
@@ -40,6 +53,13 @@
         protected override void BeginProcessing()
         {
             string path;
+
+            haveMap = MyInvocation.BoundParameters.ContainsKey("SchemaMap");
+
+            if (haveMap)
+            {
+                WriteDebug("I have a map!!!");
+            }
 
             if (Path.IsPathRooted(this.LiteralPath))
             {
@@ -49,11 +69,20 @@
             {
                 path = Path.GetFullPath(Path.Combine((new SessionState()).Path.CurrentFileSystemLocation.Path, this.LiteralPath));
             }
+            WriteDebug(string.Format(@"Input path is {0}", path));
 
             try
             {
+                if (Unicode)
+                {
+                    ldifStreamReader = new StreamReader(path, Encoding.Unicode);
+                }
+                else
+                {
+                    ldifStreamReader = new StreamReader(path, Encoding.Default);
+                }
+
                 // Open with default encoding to read high order ASCII characters (accented characters primarily)
-                ldifStreamReader = new StreamReader(path, Encoding.Default);
             }
             catch (Exception ex)
             {
@@ -90,16 +119,36 @@
                 }
 
                 // If it is DN, then we are starting a new object
-                if (Regex.IsMatch(line, @"^dn: .+$", RegexOptions.IgnoreCase))
+                if (dnCheck.IsMatch(line))
                 {
                     ldifEntry = new PSObject();
                     //  Give object a type name which can be identified later
                     ldifEntry.TypeNames.Insert(0, "BoothBilt.Utility.LdifTool.LdifEntry");
+
+                    string dnValue = dnCheck.Match(line).Groups["dnValue"].ToString();
+                    if (IsBase64String(dnValue))
+                    {
+                        dnValue = Base64Decode(dnValue);
+                        // Identify the entry as having a Base64 DN
+                        // This can then be used -- by Select-Object, for example -- to control processing further down the pipeline
+                        if (ldifEntry.TypeNames.Contains("LdifEntry.Base64"))
+                        {
+                            // we are good; 
+                        }
+                        else
+                        {
+                            ldifEntry.TypeNames.Add("LdifEntry.Base64");
+                        }
+                        WriteDebug(dnValue);
+                    }
+
+                    ldifEntry.Properties.Add(new PSNoteProperty("dn", dnValue));
+                    continue;
                 }
 
-                // If it is an empty line, then we are finished for this object
+                // If it is an empty line, or a line with only whitespace then we are finished for this object
                 // Ship it!
-                if (Regex.IsMatch(line, @"^$", RegexOptions.IgnoreCase))
+                if (Regex.IsMatch(line, @"^\s*$", RegexOptions.IgnoreCase))
                 {
                     WriteObject(ldifEntry);
 
@@ -112,15 +161,45 @@
                     continue;
                 }
 
-                if (this.attributeMatch.IsMatch(line))
+                if (attributeMatch.IsMatch(line))
                 {
-                    attrName = this.attributeMatch.Match(line).Groups["attrName"].ToString();
-                    attrValue = this.attributeMatch.Match(line).Groups["attrValue"].ToString();
+                    attrName = attributeMatch.Match(line).Groups["attrName"].ToString();
+                    attrValue = attributeMatch.Match(line).Groups["attrValue"].ToString();
                 }
-                else if (this.binaryAttributeMatch.IsMatch(line))
+                else if (binaryAttributeMatch.IsMatch(line))
                 {
-                    attrName = this.binaryAttributeMatch.Match(line).Groups["attrName"].ToString() + "_binary";
-                    attrValue = this.binaryAttributeMatch.Match(line).Groups["attrValue"].ToString();
+                    attrName = binaryAttributeMatch.Match(line).Groups["attrName"].ToString();
+                    attrValue = binaryAttributeMatch.Match(line).Groups["attrValue"].ToString();
+
+                    if (haveMap)
+                    {
+                        if (SchemaMap.ContainsKey(attrName))
+                            {
+                            if (CanConvert(attrName))
+                            {
+                                if (IsBase64String(attrValue))
+                                {
+                                    attrValue = Base64Decode(attrValue);
+
+                                    // Identify the entry as having at least one Base64 attribute that has been converted to UTF8
+                                    // This can then be used -- by Select-Object, for example -- to control processing further down the pipeline
+                                    if (ldifEntry.TypeNames.Contains("LdifEntry.Base64"))
+                                    {
+                                        // we are good; 
+                                    }
+                                    else
+                                    {
+                                        ldifEntry.TypeNames.Add("LdifEntry.Base64");
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        attrName = attrName + "_binary";
+                    }
                 }
                 else
                 {
@@ -139,7 +218,7 @@
                         {
                             line = ldifStreamReader.ReadLine();
                             if (line == null) { break; }
-                        } while (!Regex.IsMatch(line, @"^$"));
+                        } while (!Regex.IsMatch(line, @"^\s*$"));
 
                         WriteError(new ErrorRecord(new InvalidDataException(string.Format("Invalid changetype: {0}", attrValue)), "errid", ErrorCategory.InvalidArgument, ldifEntry));
 
@@ -174,6 +253,24 @@
             }
         }
 
+        private bool CanConvert(string attrName)
+        {
+            bool bReturn = false;
+
+            switch (SchemaMap[attrName])
+            {
+                case "2.5.5.3":
+                case "2.5.5.4":
+                case "2.5.5.12":
+                    bReturn = true;
+                    break;
+                default:
+                    break;
+            }
+
+            return bReturn;
+        }
+
         protected override void EndProcessing()
         {
             if (ldifStreamReader != null)
@@ -191,6 +288,22 @@
         }
 
         #endregion Protected Override Methods
+
+        #region Base64 functions
+
+        private string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
+        private bool IsBase64String(string testString)
+        {
+            testString = testString.Trim();
+            return (testString.Length % 4 == 0) && Regex.IsMatch(testString, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
+        }
+
+        #endregion Base64 functions
 
         #region IDisposable implementation
 

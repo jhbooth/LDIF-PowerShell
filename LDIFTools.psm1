@@ -66,7 +66,7 @@ function Export-DirectoryCredential
 	$export = New-Object System.Management.Automation.PSObject
 	
 	# Give object a type name which can be identified later
-	$export.PSObject.TypeNames.Insert(0, ’ExportedDirectoryCredential’)
+	$export.PSObject.TypeNames.Insert(0, 'ExportedDirectoryCredential')
 	
 	$uid = Read-Host -Prompt "Enter user name"
 	$dmn = Read-Host -Prompt 'Enter domain'

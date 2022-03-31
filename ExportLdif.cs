@@ -15,7 +15,7 @@
         #region Class Members
 
         private StreamWriter ldifStreamWriter;
-        private Regex binaryAttribute = new Regex(@"^(?<attrName>[\w-;]+)_binary$", RegexOptions.IgnoreCase);
+        private readonly Regex binaryAttribute = new Regex(@"^(?<attrName>[\w-;]+)_binary$", RegexOptions.IgnoreCase);
         private List<string> excludedProperties = new List<string>();
 
         #endregion Class Members
@@ -28,10 +28,10 @@
         [Alias("Path")]
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
-        public string LiteralPath { get; set; }
+        public String LiteralPath { get; set; }
 
         [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true)]
-        public Collection<PSObject> ldifObjects;
+        public PSObject[] LdifObjects;
 
         [Parameter]
         public SwitchParameter Unicode { get; set; }
@@ -65,6 +65,8 @@
                 {
                     ldifStreamWriter = new StreamWriter(path, false, Encoding.Default);
                 }
+                ldifStreamWriter.WriteLine(string.Format(@"# Generated at {0:u}", DateTime.Now.ToUniversalTime()));
+
             }
             catch (Exception ex)
             {
@@ -80,7 +82,7 @@
             PSMemberInfoCollection<PSPropertyInfo> properties;
             ReadOnlyPSMemberInfoCollection<PSPropertyInfo> propertyValues;
             PSPropertyInfo ps;
-            foreach (PSObject entry in this.ldifObjects)
+            foreach (PSObject entry in this.LdifObjects)
             {
                 properties = entry.Properties;
 

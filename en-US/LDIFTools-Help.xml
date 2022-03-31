@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<helpItems schema="maml" xmlns="http://msh">
+	<!-- Edited with: SAPIEN PowerShell HelpWriter 2022 v2.3.54-->
+	<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+		<!--TAG: HASCOMMONPARAMETERS-->
+		<!--Command-->
+		<command:details>
+			<command:name>Import-Ldif</command:name>
+			<maml:description>
+				<maml:para>Creates custom objects from the items in a LDAP Data Interchange Format (LDIF) file.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para />
+			</maml:copyright>
+			<command:verb>Import</command:verb>
+			<command:noun>Ldif</command:noun>
+			<dev:version />
+		</command:details>
+		<maml:description>
+			<maml:para>The `Import-Ldif` cmdlet creates custom objects from the content of an LDIF file. For more information about the LDIF file format refer to RFC2849.</maml:para>
+		</maml:description>
+		<command:syntax>
+			<!--Parameter Sets-->
+		</command:syntax>
+		<command:parameters>
+			<!-- All Parameters-->
+			<command:parameter required="true" globbing="false" pipelineInput="False" variableLength="false" position="named" aliases="Path">
+				<maml:name>LiteralPath</maml:name>
+				<maml:description>
+					<maml:para>Specifies a path to the LDIF file to Import</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+				<dev:type>
+					<maml:name>String</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue />
+			</command:parameter>
+			<command:parameter required="false" globbing="false" pipelineInput="False" variableLength="false" position="named">
+				<maml:name>Unicode</maml:name>
+				<maml:description>
+					<maml:para>Indicates that the input file is Unicode format</maml:para>
+				</maml:description>
+				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+				<dev:type>
+					<maml:name>SwitchParameter</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue />
+			</command:parameter>
+			<command:parameter required="false" globbing="false" pipelineInput="False" variableLength="false" position="named">
+				<maml:name>SchemaMap</maml:name>
+				<maml:description>
+					<maml:para>A simple hashtable that governs the conversion of Base64 encoded attribute values to UTF8 representations</maml:para>
+				</maml:description>
+				<command:parameterValue required="false" variableLength="false">Hashtable</command:parameterValue>
+				<dev:type>
+					<maml:name>Hashtable</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue />
+			</command:parameter>
+		</command:parameters>
+		<command:returnValues>
+			<!-- Outputs-->
+			<command:returnValue>
+				<dev:type>
+					<maml:name>Object</maml:name>
+					<maml:uri></maml:uri>
+				</dev:type>
+				<maml:description>
+					<maml:para />
+				</maml:description>
+			</command:returnValue>
+		</command:returnValues>
+		<maml:relatedLinks>
+			<!-- Links-->
+			<maml:navigationLink>
+				<maml:linkText>RFC2849</maml:linkText>
+				<maml:uri>https://www.rfc-editor.org/rfc/rfc2849</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>Export-Ldif</maml:linkText>
+				<maml:uri></maml:uri>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command:command>
+	<!-- Edited with: SAPIEN PowerShell HelpWriter 2022 v2.3.54-->
+	<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+		<!--TAG: HASCOMMONPARAMETERS-->
+		<!-- Command-->
+		<command:details>
+			<command:name>Export-Ldif</command:name>
+			<maml:description>
+				<maml:para>Writes LDIF representation of PSObjects to file.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para />
+			</maml:copyright>
+			<command:verb>Export</command:verb>
+			<command:noun>Ldif</command:noun>
+			<dev:version />
+		</command:details>
+		<maml:description>
+			<maml:para />
+		</maml:description>
+		<command:syntax>
+			<!-- Parameter Sets-->
+		</command:syntax>
+		<command:parameters>
+			<!-- All Parameters-->
+			<command:parameter required="false" globbing="false" pipelineInput="False" variableLength="false" position="named" aliases="Path">
+				<maml:name>LiteralPath</maml:name>
+				<maml:description />
+				<command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+				<dev:type>
+					<maml:name>String</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue />
+			</command:parameter>
+			<command:parameter required="true" globbing="false" pipelineInput="True" variableLength="false" position="1">
+				<maml:name>LdifObjects</maml:name>
+				<maml:description>
+					<maml:para>Array of PSObjects to be written to file.</maml:para>
+				</maml:description>
+				<command:parameterValue required="false" variableLength="false">PSObject[]</command:parameterValue>
+				<dev:type>
+					<maml:name>PSObject[]</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue />
+			</command:parameter>
+			<command:parameter required="false" globbing="false" pipelineInput="False" variableLength="false" position="named">
+				<maml:name>Unicode</maml:name>
+				<maml:description>
+					<maml:para>Write output file in Unicode format.</maml:para>
+				</maml:description>
+				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+				<dev:type>
+					<maml:name>SwitchParameter</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue />
+			</command:parameter>
+		</command:parameters>
+		<maml:relatedLinks>
+			<!-- Links-->
+			<maml:navigationLink>
+				<maml:linkText>RFC2849</maml:linkText>
+				<maml:uri>https://www.rfc-editor.org/rfc/rfc2849</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>Import-Ldif</maml:linkText>
+				<maml:uri></maml:uri>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command:command>
+	<!-- Edited with: SAPIEN PowerShell HelpWriter 2022 v2.3.54-->
+</helpItems>

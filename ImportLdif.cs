@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.IO;
     using System.Management.Automation;
     using System.Text;
@@ -15,11 +16,11 @@
 
         private StreamReader ldifStreamReader;
 
-        private Regex dnCheck = new Regex(@"\Adn::?\s(?<dnValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private readonly Regex dnCheck = new Regex(@"\Adn::?\s(?<dnValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private Regex attributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?):\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private readonly Regex attributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?):\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private Regex binaryAttributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?)(;binary)?::\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private readonly Regex binaryAttributeMatch = new Regex(@"\A(?i)(?<attrName>[a-z][-a-z0-9;]*?)(;binary)?::\s(?<attrValue>.+)\Z", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private ScriptBlock reverseDNScriptBlock = ScriptBlock.Create(@"$x = $this.dn -split '(?<!\\),';[array]::Reverse($x);$x -join ','");
 
@@ -39,12 +40,12 @@
         [ValidateNotNullOrEmpty]
         public string LiteralPath { get; set; }
 
+        [Parameter]
+        public SwitchParameter Unicode { get; set; }
+
         [Alias("Map")]
         [Parameter(Mandatory = false)]
         public Hashtable SchemaMap { get; set; }
-
-        [Parameter]
-        public SwitchParameter Unicode { get; set; }
 
         #endregion Parameters
 
@@ -75,14 +76,22 @@
             {
                 if (Unicode)
                 {
+                    // Unicode specified, so read as such
                     ldifStreamReader = new StreamReader(path, Encoding.Unicode);
                 }
                 else
                 {
+                    // Open with default encoding to read high order ASCII characters (accented characters primarily)
                     ldifStreamReader = new StreamReader(path, Encoding.Default);
                 }
+                // Check the beginning of the file to see if the file begins with blank space, if so
+                // read until the first non-whitespace character
+                List<char> whitespace = new List<char>() { (char)13, (char)10, (char)9, (char)32 };
 
-                // Open with default encoding to read high order ASCII characters (accented characters primarily)
+                while (whitespace.Contains((char)ldifStreamReader.Peek()))
+                {
+                    ldifStreamReader.Read();
+                }
             }
             catch (Exception ex)
             {
@@ -103,7 +112,7 @@
                 while (ldifStreamReader.Peek() == 32)
                 {
                     string continuation = ldifStreamReader.ReadLine();
-                    line += continuation.Substring(1);
+                    line += continuation[1..];
                 }
 
                 //  If the version marker is there, ignore it
@@ -139,9 +148,9 @@
                         {
                             ldifEntry.TypeNames.Add("LdifEntry.Base64");
                         }
-                        WriteDebug(dnValue);
                     }
 
+                    WriteDebug(dnValue);
                     ldifEntry.Properties.Add(new PSNoteProperty("dn", dnValue));
                     continue;
                 }
@@ -151,6 +160,7 @@
                 if (Regex.IsMatch(line, @"^\s*$", RegexOptions.IgnoreCase))
                 {
                     WriteObject(ldifEntry);
+                    ldifEntry = null;
 
                     // get rid of extra blank lines
                     while (ldifStreamReader.Peek() == 0x0D)
@@ -174,7 +184,7 @@
                     if (haveMap)
                     {
                         if (SchemaMap.ContainsKey(attrName))
-                            {
+                        {
                             if (CanConvert(attrName))
                             {
                                 if (IsBase64String(attrValue))
@@ -198,7 +208,7 @@
                     }
                     else
                     {
-                        attrName = attrName + "_binary";
+                        attrName += "_binary";
                     }
                 }
                 else
@@ -253,24 +263,6 @@
             }
         }
 
-        private bool CanConvert(string attrName)
-        {
-            bool bReturn = false;
-
-            switch (SchemaMap[attrName])
-            {
-                case "2.5.5.3":
-                case "2.5.5.4":
-                case "2.5.5.12":
-                    bReturn = true;
-                    break;
-                default:
-                    break;
-            }
-
-            return bReturn;
-        }
-
         protected override void EndProcessing()
         {
             if (ldifStreamReader != null)
@@ -290,6 +282,23 @@
         #endregion Protected Override Methods
 
         #region Base64 functions
+        private bool CanConvert(string attrName)
+        {
+            bool bReturn = false;
+
+            switch (SchemaMap[attrName])
+            {
+                case "2.5.5.3":
+                case "2.5.5.4":
+                case "2.5.5.12":
+                    bReturn = true;
+                    break;
+                default:
+                    break;
+            }
+
+            return bReturn;
+        }
 
         private string Base64Decode(string base64EncodedData)
         {

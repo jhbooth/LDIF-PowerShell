@@ -63,7 +63,7 @@
                 }
                 else
                 {
-                    ldifStreamWriter = new StreamWriter(path, false, Encoding.Default);
+                    ldifStreamWriter = new StreamWriter(path, false, new UTF8Encoding());
                 }
                 ldifStreamWriter.WriteLine(string.Format(@"# Generated at {0:u}", DateTime.Now.ToUniversalTime()));
 

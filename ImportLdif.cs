@@ -82,9 +82,9 @@
                 else
                 {
                     // Open with default encoding to read high order ASCII characters (accented characters primarily)
-                    ldifStreamReader = new StreamReader(path, Encoding.Default);
+                    ldifStreamReader = new StreamReader(path, new UTF8Encoding());
                 }
-                // Check the beginning of the file to see if the file begins with blank space, if so
+                // Check the beginning of the file to see if it begins with white space, if so
                 // read until the first non-whitespace character
                 List<char> whitespace = new List<char>() { (char)13, (char)10, (char)9, (char)32 };
 
@@ -112,7 +112,7 @@
                 while (ldifStreamReader.Peek() == 32)
                 {
                     string continuation = ldifStreamReader.ReadLine();
-                    line += continuation[1..];
+                    line += continuation.Substring(1);
                 }
 
                 //  If the version marker is there, ignore it

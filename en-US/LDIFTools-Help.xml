@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <helpItems schema="maml" xmlns="http://msh">
-	<!-- Edited with: SAPIEN PowerShell HelpWriter 2022 v2.3.54-->
+	<!--Edited with: SAPIEN PowerShell HelpWriter 2022 v2.3.54-->
 	<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
 		<!--TAG: HASCOMMONPARAMETERS-->
 		<!--Command-->
@@ -20,14 +20,53 @@
 			<maml:para>The `Import-Ldif` cmdlet creates custom objects from the content of an LDIF file. For more information about the LDIF file format refer to RFC2849.</maml:para>
 		</maml:description>
 		<command:syntax>
-			<!--Parameter Sets-->
+			<command:syntaxItem parametersetname="default">
+				<!--NAME: default-->
+				<maml:name>Import-Ldif</maml:name>
+				<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="0" aliases="Path">
+					<maml:name>LiteralPath</maml:name>
+					<maml:description>
+						<maml:para>Path of the LDIF file to import.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue />
+				</command:parameter>
+				<command:parameter required="false" globbing="false" pipelineInput="False" variableLength="false" position="named">
+					<maml:name>Unicode</maml:name>
+					<maml:description>
+						<maml:para>Indicates that the input file is Unicode format</maml:para>
+					</maml:description>
+					<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+					<dev:type>
+						<maml:name>SwitchParameter</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue />
+				</command:parameter>
+				<command:parameter required="false" globbing="false" pipelineInput="False" variableLength="false" position="named">
+					<maml:name>SchemaMap</maml:name>
+					<maml:description>
+						<maml:para>A simple hashtable that governs the conversion of Base64 encoded attribute values to UTF8 representations</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+					<dev:type>
+						<maml:name>Hashtable</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue />
+				</command:parameter>
+			</command:syntaxItem>
 		</command:syntax>
 		<command:parameters>
 			<!-- All Parameters-->
-			<command:parameter required="true" globbing="false" pipelineInput="False" variableLength="false" position="named" aliases="Path">
+			<command:parameter required="true" globbing="false" pipelineInput="False" variableLength="false" position="0" aliases="Path">
 				<maml:name>LiteralPath</maml:name>
 				<maml:description>
-					<maml:para>Specifies a path to the LDIF file to Import</maml:para>
+					<maml:para>Path of the LDIF file to import.</maml:para>
 				</maml:description>
 				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 				<dev:type>
@@ -61,6 +100,18 @@
 				<dev:defaultValue />
 			</command:parameter>
 		</command:parameters>
+		<command:inputTypes>
+			<!-- Inputs-->
+			<command:inputType>
+				<dev:type>
+					<maml:name>String</maml:name>
+					<maml:uri></maml:uri>
+				</dev:type>
+				<maml:description>
+					<maml:para />
+				</maml:description>
+			</command:inputType>
+		</command:inputTypes>
 		<command:returnValues>
 			<!-- Outputs-->
 			<command:returnValue>
@@ -73,6 +124,33 @@
 				</maml:description>
 			</command:returnValue>
 		</command:returnValues>
+		<command:examples>
+			<!-- Examples-->
+			<command:example>
+				<maml:title>---------------------- EXAMPLE 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:para />
+				</maml:introduction>
+				<dev:code>
+					C:\PS&gt; $list =  Import-Ldif .\test.ldif
+				</dev:code>
+				<dev:remarks>
+					<maml:para>Import from the file test.ldif and assign PSObject[] to a variable</maml:para>
+					<maml:para></maml:para>
+				</dev:remarks>
+			</command:example>
+			<command:example>
+				<maml:title>---------------------- EXAMPLE 2 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:para />
+				</maml:introduction>
+				<dev:code>C:\PS&gt; Import-Ldif -Path .\test.ldif -Unicode</dev:code>
+				<dev:remarks>
+					<maml:para>Imports the file test.ldif which is in Unicode format.</maml:para>
+					<maml:para>&gt;</maml:para>
+				</dev:remarks>
+			</command:example>
+		</command:examples>
 		<maml:relatedLinks>
 			<!-- Links-->
 			<maml:navigationLink>
@@ -105,7 +183,46 @@
 			<maml:para />
 		</maml:description>
 		<command:syntax>
-			<!-- Parameter Sets-->
+			<command:syntaxItem parametersetname="default">
+				<!--NAME: default-->
+				<maml:name>Export-Ldif</maml:name>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="0" aliases="Path">
+					<maml:name>LiteralPath</maml:name>
+					<maml:description>
+						<maml:para>Path of the LDIF file to import.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue />
+				</command:parameter>
+				<command:parameter required="false" globbing="false" pipelineInput="True" variableLength="false" position="1">
+					<maml:name>LdifObjects</maml:name>
+					<maml:description>
+						<maml:para>Array of PSObjects to be written to file.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">PSObject[]</command:parameterValue>
+					<dev:type>
+						<maml:name>PSObject[]</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue />
+				</command:parameter>
+				<command:parameter required="false" globbing="false" pipelineInput="False" variableLength="false" position="named">
+					<maml:name>Unicode</maml:name>
+					<maml:description>
+						<maml:para>Indicates that the input file is Unicode format</maml:para>
+					</maml:description>
+					<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+					<dev:type>
+						<maml:name>SwitchParameter</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue />
+				</command:parameter>
+			</command:syntaxItem>
 		</command:syntax>
 		<command:parameters>
 			<!-- All Parameters-->
@@ -144,6 +261,18 @@
 				<dev:defaultValue />
 			</command:parameter>
 		</command:parameters>
+		<command:returnValues>
+			<!-- Outputs-->
+			<command:returnValue>
+				<dev:type>
+					<maml:name>None</maml:name>
+					<maml:uri />
+				</dev:type>
+				<maml:description>
+					<maml:para />
+				</maml:description>
+			</command:returnValue>
+		</command:returnValues>
 		<maml:relatedLinks>
 			<!-- Links-->
 			<maml:navigationLink>
@@ -157,4 +286,475 @@
 		</maml:relatedLinks>
 	</command:command>
 	<!-- Edited with: SAPIEN PowerShell HelpWriter 2022 v2.3.54-->
+	<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+		<!--TAG: HASCOMMONPARAMETERS-->
+		<!--Command-->
+		<command:details>
+			<command:name>Read-Ldif</command:name>
+			<maml:description>
+				<maml:para>Reads LDIF data from an LDAP server and writes it to file.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para></maml:para>
+			</maml:copyright>
+			<command:verb>Read</command:verb>
+			<command:noun>Ldif</command:noun>
+			<dev:version />
+		</command:details>
+		<maml:description>
+			<maml:para>Wraps command line tools to retrieve LDIF files from LDAP Servers; by default, uses ldifde.exe, but can also use laimex.exe from Softerra.</maml:para>
+		</maml:description>
+		<command:syntax>
+			<!--Parameter Sets-->
+			<command:syntaxItem parametersetname="ldifde" default="true">
+				<!--NAME: ldifde-->
+				<!--TAG: DEFAULT-->
+				<maml:name>Read-Ldif</maml:name>
+				<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="0">
+					<maml:name>Server</maml:name>
+					<maml:description>
+						<maml:para>Name of the server from which the LDIF will be read.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1" aliases="FilePath">
+					<maml:name>Path</maml:name>
+					<maml:description>
+						<maml:para>Path to an LDIF file to contain the output</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Port</maml:name>
+					<maml:description>
+						<maml:para>Port used to connect to LDAP server; default 389</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+					<dev:type>
+						<maml:name>Int32</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue>389</dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>SearchBase</maml:name>
+					<maml:description>
+						<maml:para>The root DN where the search will be run.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named" aliases="Filter">
+					<maml:name>LdapFilter</maml:name>
+					<maml:description>
+						<maml:para>Search filter to use; default is (objectClass=*)</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue>(objectClass=*)</dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Scope</maml:name>
+					<maml:description>
+						<maml:para>Search scope - one of Base, OneLevel, or Subtree; default is Subtree</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<command:parameterValueGroup>
+						<command:parameterValue required="false" variableLength="false">Base</command:parameterValue>
+						<command:parameterValue required="false" variableLength="false">OneLevel</command:parameterValue>
+						<command:parameterValue required="false" variableLength="false">Subtree</command:parameterValue>
+					</command:parameterValueGroup>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue>Subtree</dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Include</maml:name>
+					<maml:description>
+						<maml:para>A list of attribute names to be retrieved by the search.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+					<dev:type>
+						<maml:name>String[]</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Exclude</maml:name>
+					<maml:description>
+						<maml:para>A list of attribute names to be excluded from the search.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+					<dev:type>
+						<maml:name>String[]</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Credential</maml:name>
+					<maml:description>
+						<maml:para>A PSCredential object with credentials needed to connect to the server.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
+					<dev:type>
+						<maml:name>PSCredential</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Ldifde</maml:name>
+					<maml:description>
+						<maml:para></maml:para>
+					</maml:description>
+					<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+					<dev:type>
+						<maml:name>SwitchParameter</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue>True</dev:defaultValue>
+				</command:parameter>
+			</command:syntaxItem>
+			<command:syntaxItem parametersetname="laimex">
+				<!--NAME: laimex-->
+				<maml:name>Read-Ldif</maml:name>
+				<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="0">
+					<maml:name>Server</maml:name>
+					<maml:description>
+						<maml:para>Name of the server from which the LDIF will be read.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1" aliases="FilePath">
+					<maml:name>Path</maml:name>
+					<maml:description>
+						<maml:para>Path to an LDIF file to contain the output</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Port</maml:name>
+					<maml:description>
+						<maml:para>Port used to connect to LDAP server; default 389</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+					<dev:type>
+						<maml:name>Int32</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue>389</dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>SearchBase</maml:name>
+					<maml:description>
+						<maml:para>The root DN where the search will be run.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named" aliases="Filter">
+					<maml:name>LdapFilter</maml:name>
+					<maml:description>
+						<maml:para>Search filter to use; default is (objectClass=*)</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue>(objectClass=*)</dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Scope</maml:name>
+					<maml:description>
+						<maml:para>Search scope - one of Base, OneLevel, or Subtree; default is Subtree</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+					<command:parameterValueGroup>
+						<command:parameterValue required="false" variableLength="false">Base</command:parameterValue>
+						<command:parameterValue required="false" variableLength="false">OneLevel</command:parameterValue>
+						<command:parameterValue required="false" variableLength="false">Subtree</command:parameterValue>
+					</command:parameterValueGroup>
+					<dev:type>
+						<maml:name>String</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue>Subtree</dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Include</maml:name>
+					<maml:description>
+						<maml:para>A list of attribute names to be retrieved by the search.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+					<dev:type>
+						<maml:name>String[]</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Credential</maml:name>
+					<maml:description>
+						<maml:para>A PSCredential object with credentials needed to connect to the server.</maml:para>
+					</maml:description>
+					<command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
+					<dev:type>
+						<maml:name>PSCredential</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue></dev:defaultValue>
+				</command:parameter>
+				<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+					<maml:name>Laimex</maml:name>
+					<maml:description>
+						<maml:para></maml:para>
+					</maml:description>
+					<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+					<dev:type>
+						<maml:name>SwitchParameter</maml:name>
+						<maml:uri />
+					</dev:type>
+					<dev:defaultValue>False</dev:defaultValue>
+				</command:parameter>
+			</command:syntaxItem>
+		</command:syntax>
+		<command:parameters>
+			<!--All Parameters-->
+			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="0">
+				<maml:name>Server</maml:name>
+				<maml:description>
+					<maml:para>Name of the server from which the LDIF will be read.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+				<dev:type>
+					<maml:name>String</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue></dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1" aliases="FilePath">
+				<maml:name>Path</maml:name>
+				<maml:description>
+					<maml:para>Path to an LDIF file to contain the output</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+				<dev:type>
+					<maml:name>String</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue></dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+				<maml:name>Port</maml:name>
+				<maml:description>
+					<maml:para>Port used to connect to LDAP server; default 389</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+				<dev:type>
+					<maml:name>Int32</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue>389</dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+				<maml:name>SearchBase</maml:name>
+				<maml:description>
+					<maml:para>The root DN where the search will be run.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+				<dev:type>
+					<maml:name>String</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue></dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named" aliases="Filter">
+				<maml:name>LdapFilter</maml:name>
+				<maml:description>
+					<maml:para>Search filter to use; default is (objectClass=*)</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+				<dev:type>
+					<maml:name>String</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue>(objectClass=*)</dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+				<maml:name>Scope</maml:name>
+				<maml:description>
+					<maml:para>Search scope - one of Base, OneLevel, or Subtree; default is Subtree</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+				<command:parameterValueGroup>
+					<command:parameterValue required="false" variableLength="false">Base</command:parameterValue>
+					<command:parameterValue required="false" variableLength="false">OneLevel</command:parameterValue>
+					<command:parameterValue required="false" variableLength="false">Subtree</command:parameterValue>
+				</command:parameterValueGroup>
+				<dev:type>
+					<maml:name>String</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue>Subtree</dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+				<maml:name>Include</maml:name>
+				<maml:description>
+					<maml:para>A list of attribute names to be retrieved by the search.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+				<dev:type>
+					<maml:name>String[]</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue></dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+				<maml:name>Exclude</maml:name>
+				<maml:description>
+					<maml:para>A list of attribute names to be excluded from the search.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+				<dev:type>
+					<maml:name>String[]</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue></dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+				<maml:name>Credential</maml:name>
+				<maml:description>
+					<maml:para>A PSCredential object with credentials needed to connect to the server.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
+				<dev:type>
+					<maml:name>PSCredential</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue></dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+				<maml:name>Ldifde</maml:name>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+				<dev:type>
+					<maml:name>SwitchParameter</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue>True</dev:defaultValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+				<maml:name>Laimex</maml:name>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+				<dev:type>
+					<maml:name>SwitchParameter</maml:name>
+					<maml:uri />
+				</dev:type>
+				<dev:defaultValue>False</dev:defaultValue>
+			</command:parameter>
+		</command:parameters>
+		<command:returnValues>
+			<!--Outputs-->
+			<command:returnValue>
+				<dev:type>
+					<maml:name>System.Boolean</maml:name>
+					<maml:uri></maml:uri>
+				</dev:type>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+			</command:returnValue>
+		</command:returnValues>
+		<maml:alertSet>
+			<!--Notes-->
+			<maml:title></maml:title>
+			<maml:alert>
+				<maml:para>.</maml:para>
+			</maml:alert>
+		</maml:alertSet>
+		<command:examples>
+			<!--Examples-->
+			<command:example>
+				<maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:para>PS C:\&gt;</maml:para>
+				</maml:introduction>
+				<dev:code>Read-Ldif -Path 'local.ldf' -Server 'localhost'</dev:code>
+				<dev:remarks>
+					<maml:para></maml:para>
+				</dev:remarks>
+			</command:example>
+			<command:example>
+				<maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:para>PS C:\&gt;</maml:para>
+				</maml:introduction>
+				<dev:code>Read-Ldif localhost schema.ldif -SearchBase '#schemaNamingContext'</dev:code>
+				<dev:remarks>
+					<maml:para>Reads schema information from a local AD LDS instance.</maml:para>
+				</dev:remarks>
+			</command:example>
+		</command:examples>
+		<maml:relatedLinks>
+			<!--Links-->
+			<maml:navigationLink>
+				<maml:linkText>Laimex.exe</maml:linkText>
+				<maml:uri>https://www.ldapadministrator.com/features.htm#import</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>ldifde.exe</maml:linkText>
+				<maml:uri>https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/cc731033(v=ws.11)</maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>Import-Ldif</maml:linkText>
+				<maml:uri></maml:uri>
+			</maml:navigationLink>
+			<maml:navigationLink>
+				<maml:linkText>Export-Ldif</maml:linkText>
+				<maml:uri></maml:uri>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command:command>
+	<!--Edited with: SAPIEN PowerShell HelpWriter 2022 v2.3.54-->
 </helpItems>

@@ -132,7 +132,7 @@
                 {
                     ldifEntry = new PSObject();
                     //  Give object a type name which can be identified later
-                    ldifEntry.TypeNames.Insert(0, "BoothBilt.Utility.LdifTool.LdifEntry");
+                    ldifEntry.TypeNames.Insert(0, "BoothBilt.LdifTools.LdifEntry");
 
                     string dnValue = dnCheck.Match(line).Groups["dnValue"].ToString();
                     if (IsBase64String(dnValue))
@@ -159,8 +159,11 @@
                 // Ship it!
                 if (Regex.IsMatch(line, @"^\s*$", RegexOptions.IgnoreCase))
                 {
-                    WriteObject(ldifEntry);
-                    ldifEntry = null;
+                    if (null != ldifEntry)
+                    {
+                        WriteObject(ldifEntry);
+                        ldifEntry = null;
+                    }
 
                     // get rid of extra blank lines
                     while (ldifStreamReader.Peek() == 0x0D)
@@ -218,19 +221,21 @@
                 }
 
                 // check if this is a changetype attribute, and if it is, make sure that it is an add
-                // otherwise, throw an error for this entry and read to the end of the entry
+                // otherwise, throw an error for this entry, read to the end of the entry, and null out ldifentry
                 if (attrName.ToLowerInvariant() == "changetype")
                 {
                     string av = attrValue.ToLowerInvariant();
                     if (av != "add" && av != "ntdsschemaadd")
                     {
+                        WriteError(new ErrorRecord(new InvalidDataException(string.Format("Invalid changetype: {0}", attrValue)), "errid", ErrorCategory.InvalidArgument, ldifEntry));
+                        ldifEntry = null;
+
                         do
                         {
                             line = ldifStreamReader.ReadLine();
                             if (line == null) { break; }
                         } while (!Regex.IsMatch(line, @"^\s*$"));
 
-                        WriteError(new ErrorRecord(new InvalidDataException(string.Format("Invalid changetype: {0}", attrValue)), "errid", ErrorCategory.InvalidArgument, ldifEntry));
 
                         continue;
                     }

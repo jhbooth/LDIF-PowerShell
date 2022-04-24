@@ -5,60 +5,63 @@
 #
 
 @{
-
-# Version number of this module.
-ModuleVersion = '2.1.0.0'
-
-# Supported PSEditions
-CompatiblePSEditions = 'Desktop', 'Core'
-
-# ID used to uniquely identify this module
-GUID = 'b39e39de-0c41-46fd-b9de-aaac628ce507'
-
-# Author of this module
-Author = 'James Booth'
-
-# Company or vendor of this module
-CompanyName = '1765455 Ontario Inc., O/A BoothBilt'
-
-# Copyright statement for this module
-Copyright = ' Copyright ©  2012-2022, BoothBilt - James Booth'
-
-# Description of the functionality provided by this module
-Description = 'Cmdlets and functions for working with LDIF files'
-
-# Minimum version of the Windows PowerShell engine required by this module
-PowerShellVersion = '5.1'
-
-# Modules to import as nested modules of the module specified in ModuleToProcess
-NestedModules = @("ldiftools.dll","ReadLdif.psm1")
-
-# Cmdlets to export from this module
-CmdletsToExport = @('Import-Ldif','Export-Ldif')
-
-# Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-PrivateData = @{
-
-    PSData = @{
-
-        # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = @('LDIFTools', 'PSEdition_Core', 'PSEdition_Desktop', 'Windows', 'Linux')
-
-        # A URL to the license for this module.
-        # LicenseUri = ''
-
-        # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/jhbooth/LDIF-PowerShell'
-
-        # A URL to an icon representing this module.
-        # IconUri = ''
-
-        # Flag to indicate whether the module requires explicit user acceptance for install/update/save
-        RequireLicenseAcceptance = $false
-
-    } # End of PSData hashtable
-
-} # End of PrivateData hashtable
-
+	
+	# Version number of this module.
+	ModuleVersion	     = '2.1.0.0'
+	
+	# Supported PSEditions
+	CompatiblePSEditions = 'Desktop', 'Core'
+	
+	# ID used to uniquely identify this module
+	GUID				 = 'b39e39de-0c41-46fd-b9de-aaac628ce507'
+	
+	# Author of this module
+	Author			     = 'James Booth'
+	
+	# Company or vendor of this module
+	CompanyName		     = '1765455 Ontario Inc., O/A BoothBilt'
+	
+	# Copyright statement for this module
+	Copyright		     = ' Copyright ©  2012-2022, BoothBilt - James Booth'
+	
+	# Description of the functionality provided by this module
+	Description		     = 'Cmdlets and functions for working with LDIF files'
+	
+	# Minimum version of the Windows PowerShell engine required by this module
+	PowerShellVersion    = '5.1'
+	
+	# Modules to import as nested modules of the module specified in ModuleToProcess
+	NestedModules	     = @("ldiftools.dll", "LDIFTools.psm1")
+	
+	# Cmdlets to export from this module
+	CmdletsToExport	     = @('Import-Ldif', 'Export-Ldif')
+	
+	# Functions to export from this module
+	FunctionsToExport = @('Read-Ldif')
+	
+	# Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
+	PrivateData		     = @{
+		
+		PSData = @{
+			
+			# Tags applied to this module. These help with module discovery in online galleries.
+			Tags					 = @('LDIFTools', 'PSEdition_Core', 'PSEdition_Desktop', 'Windows', 'Linux')
+			
+			# A URL to the license for this module.
+			# LicenseUri = ''
+			
+			# A URL to the main website for this project.
+			ProjectUri			     = 'https://github.com/jhbooth/LDIF-PowerShell'
+			
+			# A URL to an icon representing this module.
+			# IconUri = ''
+			
+			# Flag to indicate whether the module requires explicit user acceptance for install/update/save
+			RequireLicenseAcceptance = $false
+			
+		} # End of PSData hashtable
+		
+	} # End of PrivateData hashtable
+	
 }
 
